@@ -108,7 +108,7 @@ public final class Worlds {
         world.setGameRule(GameRule.RANDOM_TICK_SPEED, 3);
         world.setGameRule(GameRule.REDUCED_DEBUG_INFO, false);
         world.setGameRule(GameRule.SEND_COMMAND_FEEDBACK, true);
-        world.setGameRule(GameRule.SHOW_DEATH_MESSAGES, false);
+        world.setGameRule(GameRule.SHOW_DEATH_MESSAGES, true);
         world.setGameRule(GameRule.SPAWN_RADIUS, 0);
         world.setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, false);
         world.setGameRule(GameRule.UNIVERSAL_ANGER, false);
