@@ -1,5 +1,6 @@
 package com.cavetale.skyblock;
 
+import com.cavetale.core.event.player.PlayerTPAEvent;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -76,5 +77,10 @@ public final class EventListener implements Listener {
         if (event.getRespawnLocation().getWorld().equals(loadedWorld.world)) return;
         // Set to world spawn
         event.setRespawnLocation(loadedWorld.world.getSpawnLocation());
+    }
+
+    @EventHandler
+    private void onPlayerTPA(PlayerTPAEvent event) {
+        event.setCancelled(true);
     }
 }
