@@ -85,7 +85,7 @@ public final class Worlds {
         world.setGameRule(GameRule.DO_ENTITY_DROPS, true);
         world.setGameRule(GameRule.DO_FIRE_TICK, true);
         world.setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, false);
-        world.setGameRule(GameRule.DO_INSOMNIA, true); // ?
+        world.setGameRule(GameRule.DO_INSOMNIA, false);
         world.setGameRule(GameRule.DO_LIMITED_CRAFTING, false);
         world.setGameRule(GameRule.DO_MOB_LOOT, true);
         world.setGameRule(GameRule.DO_MOB_SPAWNING, true);
