@@ -15,6 +15,7 @@ import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
+import org.bukkit.entity.SpawnCategory;
 import static com.cavetale.skyblock.SkyblockPlugin.plugin;
 
 public final class Worlds {
@@ -118,6 +119,22 @@ public final class Worlds {
         world.getWorldBorder().setDamageBuffer(0.0);
         world.getWorldBorder().setWarningDistance(4);
         world.getWorldBorder().setWarningTime(5);
+        // Defaults, I hope
+        world.setSpawnFlags(true, true);
+        world.setSpawnLimit(SpawnCategory.MONSTER, 70);
+        world.setSpawnLimit(SpawnCategory.ANIMAL, 10);
+        world.setSpawnLimit(SpawnCategory.WATER_ANIMAL, 5);
+        world.setSpawnLimit(SpawnCategory.WATER_AMBIENT, 20);
+        world.setSpawnLimit(SpawnCategory.WATER_UNDERGROUND_CREATURE, 5);
+        world.setSpawnLimit(SpawnCategory.AMBIENT, 15);
+        world.setSpawnLimit(SpawnCategory.AXOLOTL, 5);
+        world.setTicksPerSpawns(SpawnCategory.MONSTER, 1);
+        world.setTicksPerSpawns(SpawnCategory.ANIMAL, 400 );
+        world.setTicksPerSpawns(SpawnCategory.WATER_ANIMAL, 1);
+        world.setTicksPerSpawns(SpawnCategory.WATER_AMBIENT, 1);
+        world.setTicksPerSpawns(SpawnCategory.WATER_UNDERGROUND_CREATURE, 1);
+        world.setTicksPerSpawns(SpawnCategory.AMBIENT, 1);
+        world.setTicksPerSpawns(SpawnCategory.AXOLOTL, 1);
     }
 
     public LoadedWorld create(UUID uuid) {
