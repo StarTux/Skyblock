@@ -68,10 +68,10 @@ public final class Worlds {
     }
 
     protected boolean unload(LoadedWorld loadedWorld) {
+        loadedWorld.save();
         if (!loadedWorld.world.getPlayers().isEmpty()) return false;
         final boolean save = true;
         if (!Bukkit.unloadWorld(loadedWorld.world, save)) return false;
-        loadedWorld.saveIfDirty();
         loadedWorlds.remove(loadedWorld.uuid.toString());
         return true;
     }
@@ -129,7 +129,7 @@ public final class Worlds {
         world.setSpawnLimit(SpawnCategory.AMBIENT, 15);
         world.setSpawnLimit(SpawnCategory.AXOLOTL, 5);
         world.setTicksPerSpawns(SpawnCategory.MONSTER, 1);
-        world.setTicksPerSpawns(SpawnCategory.ANIMAL, 400 );
+        world.setTicksPerSpawns(SpawnCategory.ANIMAL, 400);
         world.setTicksPerSpawns(SpawnCategory.WATER_ANIMAL, 1);
         world.setTicksPerSpawns(SpawnCategory.WATER_AMBIENT, 1);
         world.setTicksPerSpawns(SpawnCategory.WATER_UNDERGROUND_CREATURE, 1);
@@ -171,6 +171,7 @@ public final class Worlds {
             } else {
                 loadedWorld.emptyTicks = 0;
             }
+            loadedWorld.tick();
         }
     }
 

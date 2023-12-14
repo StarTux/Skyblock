@@ -1,6 +1,10 @@
 package com.cavetale.skyblock;
 
+import com.cavetale.core.event.hud.PlayerHudEvent;
+import com.cavetale.core.event.hud.PlayerHudPriority;
 import com.cavetale.core.event.player.PlayerTPAEvent;
+import com.cavetale.core.playercache.PlayerCache;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,6 +15,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
+import static com.cavetale.core.font.Unicode.tiny;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.textOfChildren;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 @RequiredArgsConstructor
 public final class EventListener implements Listener {
@@ -82,5 +90,21 @@ public final class EventListener implements Listener {
     @EventHandler
     private void onPlayerTPA(PlayerTPAEvent event) {
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    private void onPlayerHud(PlayerHudEvent event) {
+        final Player player = event.getPlayer();
+        LoadedWorld loadedWorld = plugin.getWorlds().in(player.getWorld());
+        if (loadedWorld == null) {
+            event.footer(PlayerHudPriority.DEFAULT, List.of(text("Skyblock Lobby", BLUE)));
+        } else {
+            event.footer(PlayerHudPriority.DEFAULT, List.of(textOfChildren(text(tiny("world "), GRAY), text(PlayerCache.nameForUuid(loadedWorld.uuid), WHITE)),
+                                                            textOfChildren(text(tiny("age"), GRAY),
+                                                                           text(" " + loadedWorld.days, WHITE), text("d", GRAY),
+                                                                           text(" " + loadedWorld.hours, WHITE), text("h", GRAY),
+                                                                           text(" " + loadedWorld.minutes, WHITE), text("m", GRAY),
+                                                                           text(" " + loadedWorld.seconds, WHITE), text("s", GRAY))));
+        }
     }
 }

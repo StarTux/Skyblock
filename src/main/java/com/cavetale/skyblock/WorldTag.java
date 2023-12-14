@@ -8,4 +8,5 @@ public final class WorldTag {
     protected UUID owner;
     protected long creationTime;
     protected Set<UUID> joined = new HashSet<>();
+    protected int aliveTicks;
 }
