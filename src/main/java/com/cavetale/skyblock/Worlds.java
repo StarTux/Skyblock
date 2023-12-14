@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.UUID;
 import net.kyori.adventure.util.TriState;
 import org.bukkit.Bukkit;
-import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -60,9 +59,18 @@ public final class Worlds {
     }
 
     protected LoadedWorld load(UUID uuid, World world) {
-        applyWorld(world);
         LoadedWorld loadedWorld = new LoadedWorld(world, uuid);
         loadedWorld.load();
+        applyWorld(loadedWorld, world);
+        loadedWorlds.put(uuid.toString(), loadedWorld);
+        return loadedWorld;
+    }
+
+    protected LoadedWorld create(UUID uuid, World world, SkyblockDifficulty difficulty) {
+        LoadedWorld loadedWorld = new LoadedWorld(world, uuid);
+        loadedWorld.tag = new WorldTag();
+        loadedWorld.tag.difficulty = difficulty;
+        applyWorld(loadedWorld, world);
         loadedWorlds.put(uuid.toString(), loadedWorld);
         return loadedWorld;
     }
@@ -76,8 +84,11 @@ public final class Worlds {
         return true;
     }
 
-    private void applyWorld(World world) {
-        world.setDifficulty(Difficulty.NORMAL);
+    private void applyWorld(LoadedWorld loadedWorld, World world) {
+        final SkyblockDifficulty difficulty = loadedWorld.tag.difficulty != null
+            ? loadedWorld.tag.difficulty
+            : SkyblockDifficulty.NORMAL;
+        world.setDifficulty(difficulty.difficulty);
         world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
         world.setGameRule(GameRule.COMMAND_BLOCK_OUTPUT, true);
         world.setGameRule(GameRule.DISABLE_ELYTRA_MOVEMENT_CHECK, true);
@@ -99,12 +110,12 @@ public final class Worlds {
         world.setGameRule(GameRule.FIRE_DAMAGE, true);
         world.setGameRule(GameRule.FORGIVE_DEAD_PLAYERS, true);
         world.setGameRule(GameRule.FREEZE_DAMAGE, true);
-        world.setGameRule(GameRule.KEEP_INVENTORY, false);
+        world.setGameRule(GameRule.KEEP_INVENTORY, difficulty.keepInventory);
         world.setGameRule(GameRule.LOG_ADMIN_COMMANDS, true);
         world.setGameRule(GameRule.MAX_COMMAND_CHAIN_LENGTH, 1);
         world.setGameRule(GameRule.MAX_ENTITY_CRAMMING, 10);
         world.setGameRule(GameRule.MOB_GRIEFING, true);
-        world.setGameRule(GameRule.NATURAL_REGENERATION, true);
+        world.setGameRule(GameRule.NATURAL_REGENERATION, difficulty.naturalRegeneration);
         world.setGameRule(GameRule.PLAYERS_SLEEPING_PERCENTAGE, 101);
         world.setGameRule(GameRule.RANDOM_TICK_SPEED, 3);
         world.setGameRule(GameRule.REDUCED_DEBUG_INFO, false);
@@ -137,11 +148,11 @@ public final class Worlds {
         world.setTicksPerSpawns(SpawnCategory.AXOLOTL, 1);
     }
 
-    public LoadedWorld create(UUID uuid) {
+    public LoadedWorld create(UUID uuid, SkyblockDifficulty difficulty) {
         BuildWorld buildWorld = BuildWorld.findWithPath("skyblock");
         if (buildWorld == null) throw new IllegalStateException("BuildWorld not found: skyblock");
         World world = buildWorld.makeLocalCopy(uuid.toString());
-        LoadedWorld loadedWorld = load(uuid, world);
+        LoadedWorld loadedWorld = create(uuid, world, difficulty);
         loadedWorld.tag.owner = uuid;
         loadedWorld.tag.creationTime = System.currentTimeMillis();
         loadedWorld.save();

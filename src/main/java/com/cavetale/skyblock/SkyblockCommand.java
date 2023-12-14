@@ -4,7 +4,7 @@ import com.cavetale.core.command.AbstractCommand;
 import com.cavetale.core.command.CommandArgCompleter;
 import com.cavetale.core.command.CommandWarn;
 import com.cavetale.core.playercache.PlayerCache;
-import org.bukkit.Location;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
@@ -41,31 +41,14 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         if (plugin.getWorlds().loadTag(player.getUniqueId()) != null) {
             throw new CommandWarn("You already have a world. Abandon it first!");
         }
-        final LoadedWorld loadedWorld = plugin.getWorlds().create(player.getUniqueId());
-        final Session session = plugin.getSessions().get(player.getUniqueId());
-        final Location location = loadedWorld.world.getSpawnLocation();
-        player.teleport(location);
-        Sessions.resetPlayer(player);
-        session.setLocation(loadedWorld, location);
-        plugin.getSessions().save(session);
-        player.sendMessage(text("Welcome to your new Skyblock world!", GREEN));
+        new WorldStartGui(player).open();
     }
 
     private void abandon(Player player) {
-        LoadedWorld loadedWorld = plugin.getWorlds().get(player.getUniqueId());
-        if (loadedWorld != null) {
-            for (Player playerInWorld : loadedWorld.world.getPlayers()) {
-                playerInWorld.teleport(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
-                Sessions.resetPlayer(playerInWorld);
-            }
-            if (!plugin.getWorlds().unload(loadedWorld)) {
-                throw new CommandWarn("Cannot unload world");
-            }
-        }
-        if (!plugin.getWorlds().delete(player.getUniqueId())) {
+        if (plugin.getWorlds().loadTag(player.getUniqueId()) == null) {
             throw new CommandWarn("You do not have a world!");
         }
-        player.sendMessage(text("Your Skyblock world was successfully abandoned"));
+        new WorldAbandonGui(player).open();
     }
 
     private boolean invite(Player player, String[] args) {
@@ -108,6 +91,7 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         }
         player.teleport(inviter);
         Sessions.resetPlayer(player);
+        player.setGameMode(GameMode.SURVIVAL);
         loadedWorld.tag.joined.add(player.getUniqueId());
         loadedWorld.save();
         final Session session = plugin.getSessions().get(player.getUniqueId());
@@ -129,6 +113,7 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         }
         player.teleport(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
         Sessions.resetPlayer(player);
+        player.setGameMode(GameMode.ADVENTURE);
         Session session = plugin.getSessions().get(player.getUniqueId());
         session.clearWorld();
         plugin.getSessions().save(session);

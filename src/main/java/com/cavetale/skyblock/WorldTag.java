@@ -9,4 +9,5 @@ public final class WorldTag {
     protected long creationTime;
     protected Set<UUID> joined = new HashSet<>();
     protected int aliveTicks;
+    protected SkyblockDifficulty difficulty = SkyblockDifficulty.NORMAL;
 }
