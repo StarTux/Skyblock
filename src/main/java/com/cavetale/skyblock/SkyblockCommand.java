@@ -158,6 +158,7 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         if (loadedWorld == null) {
             throw new CommandWarn("You are not playing in a world");
         }
+        plugin.getWorlds().storeCurrentLocation(player);
         player.teleport(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
         player.setGameMode(GameMode.ADVENTURE);
         Session session = plugin.getSessions().get(player.getUniqueId());
