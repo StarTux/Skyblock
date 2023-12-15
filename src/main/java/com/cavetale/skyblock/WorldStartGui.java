@@ -77,10 +77,11 @@ public final class WorldStartGui {
         final Session session = plugin().getSessions().get(player.getUniqueId());
         final Location location = loadedWorld.world.getSpawnLocation();
         player.teleport(location);
-        Sessions.resetPlayer(player);
         player.setGameMode(GameMode.SURVIVAL);
-        session.setLocation(loadedWorld, location);
-        plugin().getSessions().save(session);
+        session.setWorld(loadedWorld);
+        session.dirty = true;
+        loadedWorld.setLocation(player.getUniqueId(), location);
+        loadedWorld.dirty = true;
         player.sendMessage(text("Welcome to your new Skyblock world!", GREEN));
     }
 }

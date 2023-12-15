@@ -14,11 +14,13 @@ import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.SpawnCategory;
 import static com.cavetale.skyblock.SkyblockPlugin.plugin;
 
 public final class Worlds {
     protected final Map<String, LoadedWorld> loadedWorlds = new HashMap<>();
+    private int ticks;
 
     protected void enable() {
         Bukkit.getScheduler().runTaskTimer(plugin(), this::tick, 1L, 1L);
@@ -37,6 +39,13 @@ public final class Worlds {
         for (LoadedWorld loadedWorld : List.copyOf(loadedWorlds.values())) {
             unload(loadedWorld);
         }
+    }
+
+    protected LoadedWorld getOrLoad(UUID uuid) {
+        LoadedWorld result = get(uuid);
+        return result != null
+            ? result
+            : load(uuid);
     }
 
     protected LoadedWorld get(UUID uuid) {
@@ -70,6 +79,7 @@ public final class Worlds {
         LoadedWorld loadedWorld = new LoadedWorld(world, uuid);
         loadedWorld.tag = new WorldTag();
         loadedWorld.tag.difficulty = difficulty;
+        loadedWorld.tag.owner = uuid;
         applyWorld(loadedWorld, world);
         loadedWorlds.put(uuid.toString(), loadedWorld);
         return loadedWorld;
@@ -184,6 +194,11 @@ public final class Worlds {
             }
             loadedWorld.tick();
         }
+        if (ticks++ % 1200 == 0) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                storeCurrentLocation(player);
+            }
+        }
     }
 
     public WorldTag loadTag(UUID uuid) {
@@ -194,5 +209,13 @@ public final class Worlds {
         File file = new File(folder, "skyblock.json");
         if (!file.exists()) return null;
         return Json.load(file, WorldTag.class, () -> null);
+    }
+
+    public boolean storeCurrentLocation(Player player) {
+        LoadedWorld loadedWorld = in(player.getWorld());
+        if (loadedWorld == null) return false;
+        loadedWorld.setLocation(player.getUniqueId(), player.getLocation());
+        loadedWorld.dirty = true;
+        return true;
     }
 }

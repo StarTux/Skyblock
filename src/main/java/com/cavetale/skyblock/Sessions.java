@@ -61,14 +61,4 @@ public final class Sessions {
             saveIfDirty(session);
         }
     }
-
-    protected static void resetPlayer(Player player) {
-        player.getInventory().clear();
-        player.setHealth(20.0);
-        player.setFoodLevel(20);
-        player.setSaturation(20f);
-        player.setFireTicks(0);
-        player.setFreezeTicks(0);
-        player.setFallDistance(0);
-    }
 }

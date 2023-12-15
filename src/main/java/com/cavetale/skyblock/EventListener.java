@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -34,34 +35,28 @@ public final class EventListener implements Listener {
     private void onPlayerSpawnLocation(PlayerSpawnLocationEvent event) {
         final Player player = event.getPlayer();
         final Session session = plugin.getSessions().load(player.getUniqueId());
-        if (session.tag.inWorld == null || session.tag.lastLocation == null) {
+        if (session.tag.inWorld == null) {
             event.setSpawnLocation(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
             return;
         }
-        LoadedWorld loadedWorld = plugin.getWorlds().get(session.tag.inWorld);
-        if (loadedWorld == null) {
-            // World not currently loaded
-            WorldTag worldTag = plugin.getWorlds().loadTag(session.tag.inWorld);
-            if (worldTag != null && worldTag.creationTime < session.tag.inWorldSince) {
-                loadedWorld = plugin.getWorlds().load(session.tag.inWorld);
-            }
-        }
-        if (loadedWorld == null) {
-            // World does not exist (anymore)
+        WorldTag worldTag = plugin.getWorlds().loadTag(session.tag.inWorld);
+        if (worldTag == null
+            || (!session.tag.inWorld.equals(player.getUniqueId()) && !worldTag.invites.contains(player.getUniqueId()))
+            || (worldTag.difficulty.hardcore && worldTag.deathCount.getOrDefault(player.getUniqueId(), 0) > 0)) {
+            // World does not exist, no permission, or hardcore death
             session.clearWorld();
-            plugin.getSessions().save(session);
+            session.dirty = true;
             event.setSpawnLocation(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
             return;
         }
-        assert loadedWorld != null && session.tag.lastLocation != null;
-        event.setSpawnLocation(session.tag.lastLocation.toLocation(loadedWorld.world));
+        LoadedWorld loadedWorld = plugin.getWorlds().getOrLoad(session.tag.inWorld);
+        event.setSpawnLocation(loadedWorld.getLocation(player.getUniqueId()));
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         if (player.getWorld().equals(plugin.getWorlds().getLobbyWorld())) {
-            Sessions.resetPlayer(player);
             player.setGameMode(GameMode.ADVENTURE);
         }
         if (plugin.getWorlds().in(player.getWorld()) != null) {
@@ -75,10 +70,27 @@ public final class EventListener implements Listener {
         final Session session = plugin.getSessions().get(player.getUniqueId());
         final LoadedWorld loadedWorld = plugin.getWorlds().in(player.getWorld());
         if (loadedWorld != null) {
-            session.setLocation(loadedWorld, player.getLocation());
+            session.setWorld(loadedWorld);
             plugin.getSessions().save(session);
+            loadedWorld.setLocation(player.getUniqueId(), player.getLocation());
+            loadedWorld.dirty = true;
         }
         plugin.getSessions().unload(session);
+    }
+
+    @EventHandler
+    private void onPlayerDeath(PlayerDeathEvent event) {
+        final Player player = event.getEntity();
+        final LoadedWorld loadedWorld = plugin.getWorlds().in(player.getWorld());
+        if (loadedWorld == null) return;
+        loadedWorld.increaseDeathCount(player.getUniqueId());
+        if (loadedWorld.tag.difficulty.hardcore) {
+            loadedWorld.clearLocation(player.getUniqueId());
+            Session session = plugin.getSessions().get(player.getUniqueId());
+            session.clearWorld();
+            session.dirty = true;
+            player.sendMessage(text("You died in a Hardcore world!", DARK_RED));
+        }
     }
 
     @EventHandler
@@ -91,16 +103,14 @@ public final class EventListener implements Listener {
             return;
         }
         // Hardcore
-        if (loadedWorld.tag.difficulty.hardcore) {
+        if (loadedWorld.tag.difficulty.hardcore && loadedWorld.getDeathCount(player.getUniqueId()) > 0) {
             event.setRespawnLocation(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
-            final Session session = plugin.getSessions().get(player.getUniqueId());
-            session.clearWorld();
-            plugin.getSessions().save(session);
-            player.sendMessage(text("You died in a Hardcore Skyblock world!", DARK_RED));
             return;
         }
         // Respawn in same world
-        if (event.getRespawnLocation().getWorld().equals(loadedWorld.world)) return;
+        if (plugin.getWorlds().in(event.getRespawnLocation().getWorld()) == loadedWorld) {
+            return;
+        }
         // Set to world spawn
         event.setRespawnLocation(loadedWorld.world.getSpawnLocation());
     }
@@ -109,7 +119,6 @@ public final class EventListener implements Listener {
     private void onPlayerPostRespawn(PlayerPostRespawnEvent event) {
         final Player player = event.getPlayer();
         if (plugin.getWorlds().getLobbyWorld().equals(player)) {
-            Sessions.resetPlayer(player);
             player.setGameMode(GameMode.ADVENTURE);
         }
     }
@@ -132,6 +141,7 @@ public final class EventListener implements Listener {
                                                                            text(" " + loadedWorld.hours, WHITE), text("h", GRAY),
                                                                            text(" " + loadedWorld.minutes, WHITE), text("m", GRAY),
                                                                            text(" " + loadedWorld.seconds, WHITE), text("s", GRAY)),
+                                                            textOfChildren(text(tiny("deaths "), GRAY), text(loadedWorld.getDeathCount(player.getUniqueId()), WHITE)),
                                                             textOfChildren(text(tiny("difficulty "), GRAY), loadedWorld.tag.difficulty.displayName)));
         }
     }

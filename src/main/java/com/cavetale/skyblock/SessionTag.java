@@ -9,5 +9,4 @@ public final class SessionTag implements Serializable {
     protected String name;
     protected UUID inWorld;
     protected long inWorldSince;
-    protected Position lastLocation;
 }
