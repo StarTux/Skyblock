@@ -36,6 +36,7 @@ public final class WorldAbandonGui {
             for (Player playerInWorld : loadedWorld.getPlayers()) {
                 playerInWorld.teleport(plugin().getWorlds().getLobbyWorld().getSpawnLocation());
                 playerInWorld.setGameMode(GameMode.ADVENTURE);
+                Sessions.resetPlayer(playerInWorld);
             }
             if (!plugin().getWorlds().unload(loadedWorld)) {
                 player.sendMessage(text("Cannot unload world", RED));

@@ -45,6 +45,10 @@ public final class Sessions {
         sessionsMap.remove(session.uuid);
     }
 
+    protected Session unload(UUID uuid) {
+        return sessionsMap.remove(uuid);
+    }
+
     protected void save(Session session) {
         session.dirty = false;
         File file = new File(sessionsFolder, session.uuid + ".json");
@@ -60,5 +64,26 @@ public final class Sessions {
         for (Session session : sessionsMap.values()) {
             saveIfDirty(session);
         }
+    }
+
+    protected void storeCurrentWorld(Player player) {
+        final LoadedWorld loadedWorld = plugin().getWorlds().in(player.getWorld());
+        final Session session = get(player.getUniqueId());
+        if (loadedWorld == null) {
+            session.clearWorld();
+        } else {
+            session.setWorld(loadedWorld);
+        }
+        save(session);
+    }
+
+    protected static void resetPlayer(Player player) {
+        player.getInventory().clear();
+        player.setHealth(20.0);
+        player.setFoodLevel(20);
+        player.setSaturation(20f);
+        player.setFireTicks(0);
+        player.setFreezeTicks(0);
+        player.setFallDistance(0);
     }
 }

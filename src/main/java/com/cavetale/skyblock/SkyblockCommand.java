@@ -68,7 +68,9 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
             throw new CommandWarn("You are already in your world");
         }
         plugin.getWorlds().storeCurrentLocation(player);
+        plugin.getWorlds().onLeaveWorld(player);
         player.teleport(loadedWorld.getLocation(player.getUniqueId()));
+        plugin.getWorlds().onJoinWorld(player);
         Session session = plugin.getSessions().get(player.getUniqueId());
         session.setWorld(loadedWorld);
         session.dirty = true;
@@ -118,7 +120,9 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         Player targetPlayer = Bukkit.getPlayer(target.uuid);
         if (targetPlayer != null && plugin.getWorlds().in(targetPlayer.getWorld()) == loadedWorld) {
             plugin.getWorlds().storeCurrentLocation(targetPlayer);
+            plugin.getWorlds().onLeaveWorld(targetPlayer);
             targetPlayer.teleport(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
+            Sessions.resetPlayer(targetPlayer);
             Session targetSession = plugin.getSessions().get(target.uuid);
             targetSession.clearWorld();
         }
@@ -140,7 +144,9 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         if (plugin.getWorlds().in(player.getWorld()) == targetWorld) {
             throw new CommandWarn("You are already in this world");
         }
+        plugin.getWorlds().onLeaveWorld(player);
         player.teleport(targetWorld.getLocation(player.getUniqueId()));
+        plugin.getWorlds().onJoinWorld(player);
         player.setGameMode(GameMode.SURVIVAL);
         final Session session = plugin.getSessions().get(player.getUniqueId());
         session.setWorld(targetWorld);
@@ -159,7 +165,9 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
             throw new CommandWarn("You are not playing in a world");
         }
         plugin.getWorlds().storeCurrentLocation(player);
+        plugin.getWorlds().onLeaveWorld(player);
         player.teleport(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
+        Sessions.resetPlayer(player);
         player.setGameMode(GameMode.ADVENTURE);
         Session session = plugin.getSessions().get(player.getUniqueId());
         session.clearWorld();

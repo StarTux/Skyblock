@@ -218,4 +218,33 @@ public final class Worlds {
         loadedWorld.dirty = true;
         return true;
     }
+
+    public void onLeaveWorld(Player player) {
+        LoadedWorld loadedWorld = in(player.getWorld());
+        if (loadedWorld == null) return;
+        final File folder = new File(loadedWorld.world.getWorldFolder(), "skyblock.d");
+        folder.mkdirs();
+        final File file = new File(folder, player.getUniqueId() + "_save.json");
+        PlayerWorldTag tag = Json.load(file, PlayerWorldTag.class, PlayerWorldTag::new);
+        PlayerWorldSave save = new PlayerWorldSave();
+        save.store(player);
+        tag.saves.add(save);
+        Json.save(file, tag, true);
+    }
+
+    public void onJoinWorld(Player player) {
+        LoadedWorld loadedWorld = in(player.getWorld());
+        if (loadedWorld == null) return;
+        final File folder = new File(loadedWorld.world.getWorldFolder(), "skyblock.d");
+        if (!folder.isDirectory()) return;
+        final File file = new File(folder, player.getUniqueId() + "_save.json");
+        if (!file.exists()) return;
+        PlayerWorldTag tag = Json.load(file, PlayerWorldTag.class, () -> null);
+        if (tag == null) return;
+        plugin().getLogger().info("Restoring inventory of " + player.getName() + ": " + Json.serialize(tag));
+        for (PlayerWorldSave save : tag.saves) {
+            save.restore(player);
+        }
+        file.delete();
+    }
 }

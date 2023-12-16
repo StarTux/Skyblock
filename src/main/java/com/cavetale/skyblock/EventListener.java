@@ -56,7 +56,9 @@ public final class EventListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
+        plugin.getWorlds().onJoinWorld(player);
         if (player.getWorld().equals(plugin.getWorlds().getLobbyWorld())) {
+            Sessions.resetPlayer(player);
             player.setGameMode(GameMode.ADVENTURE);
         }
         if (plugin.getWorlds().in(player.getWorld()) != null) {
@@ -67,15 +69,10 @@ public final class EventListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void onPlayerQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
-        final Session session = plugin.getSessions().get(player.getUniqueId());
-        final LoadedWorld loadedWorld = plugin.getWorlds().in(player.getWorld());
-        if (loadedWorld != null) {
-            session.setWorld(loadedWorld);
-            plugin.getSessions().save(session);
-            loadedWorld.setLocation(player.getUniqueId(), player.getLocation());
-            loadedWorld.dirty = true;
-        }
-        plugin.getSessions().unload(session);
+        plugin.getSessions().storeCurrentWorld(player);
+        plugin.getWorlds().storeCurrentLocation(player);
+        plugin.getWorlds().onLeaveWorld(player);
+        plugin.getSessions().unload(player.getUniqueId());
     }
 
     @EventHandler
@@ -93,7 +90,7 @@ public final class EventListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     private void onPlayerRespawn(PlayerRespawnEvent event) {
         final Player player = event.getPlayer();
         final LoadedWorld loadedWorld = plugin.getWorlds().in(player.getWorld());
@@ -104,6 +101,7 @@ public final class EventListener implements Listener {
         }
         // Hardcore
         if (loadedWorld.tag.difficulty.hardcore && loadedWorld.getDeathCount(player.getUniqueId()) > 0) {
+            plugin.getWorlds().onLeaveWorld(player);
             event.setRespawnLocation(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
             return;
         }
@@ -119,6 +117,7 @@ public final class EventListener implements Listener {
     private void onPlayerPostRespawn(PlayerPostRespawnEvent event) {
         final Player player = event.getPlayer();
         if (plugin.getWorlds().getLobbyWorld().equals(player)) {
+            Sessions.resetPlayer(player);
             player.setGameMode(GameMode.ADVENTURE);
         }
     }
