@@ -2,10 +2,12 @@ package com.cavetale.skyblock;
 
 import com.cavetale.core.util.Json;
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 public final class LoadedWorld {
@@ -86,5 +88,9 @@ public final class LoadedWorld {
 
     protected int getDeathCount(UUID playerId) {
         return tag.deathCount.getOrDefault(playerId, 0);
+    }
+
+    public List<Player> getPlayers() {
+        return world.getPlayers();
     }
 }

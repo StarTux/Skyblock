@@ -33,7 +33,7 @@ public final class WorldAbandonGui {
     private void onClickOk() {
         LoadedWorld loadedWorld = plugin().getWorlds().get(player.getUniqueId());
         if (loadedWorld != null) {
-            for (Player playerInWorld : loadedWorld.world.getPlayers()) {
+            for (Player playerInWorld : loadedWorld.getPlayers()) {
                 playerInWorld.teleport(plugin().getWorlds().getLobbyWorld().getSpawnLocation());
                 playerInWorld.setGameMode(GameMode.ADVENTURE);
             }

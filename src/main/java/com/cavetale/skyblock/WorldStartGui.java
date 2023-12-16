@@ -75,7 +75,7 @@ public final class WorldStartGui {
         }
         final LoadedWorld loadedWorld = plugin().getWorlds().create(player.getUniqueId(), difficulty);
         final Session session = plugin().getSessions().get(player.getUniqueId());
-        final Location location = loadedWorld.world.getSpawnLocation();
+        final Location location = loadedWorld.getSpawnLocation();
         player.teleport(location);
         player.setGameMode(GameMode.SURVIVAL);
         session.setWorld(loadedWorld);

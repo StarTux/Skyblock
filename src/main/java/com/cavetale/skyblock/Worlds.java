@@ -87,7 +87,7 @@ public final class Worlds {
 
     protected boolean unload(LoadedWorld loadedWorld) {
         loadedWorld.save();
-        if (!loadedWorld.world.getPlayers().isEmpty()) return false;
+        if (!loadedWorld.getPlayers().isEmpty()) return false;
         final boolean save = true;
         if (!Bukkit.unloadWorld(loadedWorld.world, save)) return false;
         loadedWorlds.remove(loadedWorld.uuid.toString());
@@ -184,7 +184,7 @@ public final class Worlds {
 
     private void tick() {
         for (LoadedWorld loadedWorld : List.copyOf(loadedWorlds.values())) {
-            if (loadedWorld.world.getPlayers().isEmpty()) {
+            if (loadedWorld.getPlayers().isEmpty()) {
                 loadedWorld.emptyTicks += 1;
                 if (loadedWorld.emptyTicks > 20 * 10) {
                     unload(loadedWorld);
