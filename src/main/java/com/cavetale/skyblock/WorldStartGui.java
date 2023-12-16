@@ -34,8 +34,10 @@ public final class WorldStartGui {
             final boolean selected = theDifficulty == difficulty;
             List<Component> lore = new ArrayList<>();
             lore.add(theDifficulty.displayName);
-            lore.add(yesno("keep inventory", theDifficulty.keepInventory));
             lore.add(yesno("health regenerates", theDifficulty.naturalRegeneration));
+            lore.add(yesno("disable mob griefing", theDifficulty.disableMobGriefing));
+            lore.add(yesno("keep inventory", theDifficulty.keepInventory));
+            lore.add(yesno("disable fire spread", theDifficulty.disableFireSpread));
             if (theDifficulty.hardcore) lore.add(text("One Life!", DARK_RED));
             ItemStack item = selected
                 ? Mytems.CROSSED_CHECKBOX.createIcon(lore)

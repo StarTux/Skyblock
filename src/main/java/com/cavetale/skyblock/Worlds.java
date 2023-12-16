@@ -99,13 +99,13 @@ public final class Worlds {
             ? loadedWorld.tag.difficulty
             : SkyblockDifficulty.NORMAL;
         world.setDifficulty(difficulty.difficulty);
-        world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
+        world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, true);
         world.setGameRule(GameRule.COMMAND_BLOCK_OUTPUT, true);
         world.setGameRule(GameRule.DISABLE_ELYTRA_MOVEMENT_CHECK, true);
         world.setGameRule(GameRule.DISABLE_RAIDS, false); // ?
         world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
         world.setGameRule(GameRule.DO_ENTITY_DROPS, true);
-        world.setGameRule(GameRule.DO_FIRE_TICK, true);
+        world.setGameRule(GameRule.DO_FIRE_TICK, !difficulty.disableFireSpread);
         world.setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, false);
         world.setGameRule(GameRule.DO_INSOMNIA, false);
         world.setGameRule(GameRule.DO_LIMITED_CRAFTING, false);
@@ -124,7 +124,7 @@ public final class Worlds {
         world.setGameRule(GameRule.LOG_ADMIN_COMMANDS, true);
         world.setGameRule(GameRule.MAX_COMMAND_CHAIN_LENGTH, 1);
         world.setGameRule(GameRule.MAX_ENTITY_CRAMMING, 10);
-        world.setGameRule(GameRule.MOB_GRIEFING, true);
+        world.setGameRule(GameRule.MOB_GRIEFING, !difficulty.disableMobGriefing);
         world.setGameRule(GameRule.NATURAL_REGENERATION, difficulty.naturalRegeneration);
         world.setGameRule(GameRule.PLAYERS_SLEEPING_PERCENTAGE, 101);
         world.setGameRule(GameRule.RANDOM_TICK_SPEED, 3);
