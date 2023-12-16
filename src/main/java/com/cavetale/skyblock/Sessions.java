@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import static com.cavetale.skyblock.SkyblockPlugin.plugin;
 
@@ -85,5 +86,6 @@ public final class Sessions {
         player.setFireTicks(0);
         player.setFreezeTicks(0);
         player.setFallDistance(0);
+        player.setGameMode(GameMode.SURVIVAL);
     }
 }

@@ -8,7 +8,6 @@ import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -59,10 +58,6 @@ public final class EventListener implements Listener {
         plugin.getWorlds().onJoinWorld(player);
         if (player.getWorld().equals(plugin.getWorlds().getLobbyWorld())) {
             Sessions.resetPlayer(player);
-            player.setGameMode(GameMode.ADVENTURE);
-        }
-        if (plugin.getWorlds().in(player.getWorld()) != null) {
-            player.setGameMode(GameMode.SURVIVAL);
         }
     }
 
@@ -118,7 +113,6 @@ public final class EventListener implements Listener {
         final Player player = event.getPlayer();
         if (plugin.getWorlds().getLobbyWorld().equals(player)) {
             Sessions.resetPlayer(player);
-            player.setGameMode(GameMode.ADVENTURE);
         }
     }
 

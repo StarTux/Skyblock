@@ -5,7 +5,6 @@ import com.cavetale.mytems.Mytems;
 import com.cavetale.mytems.util.Gui;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import static com.cavetale.skyblock.SkyblockPlugin.plugin;
@@ -35,7 +34,6 @@ public final class WorldAbandonGui {
         if (loadedWorld != null) {
             for (Player playerInWorld : loadedWorld.getPlayers()) {
                 playerInWorld.teleport(plugin().getWorlds().getLobbyWorld().getSpawnLocation());
-                playerInWorld.setGameMode(GameMode.ADVENTURE);
                 Sessions.resetPlayer(playerInWorld);
             }
             if (!plugin().getWorlds().unload(loadedWorld)) {

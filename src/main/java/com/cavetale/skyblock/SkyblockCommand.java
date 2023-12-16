@@ -5,7 +5,6 @@ import com.cavetale.core.command.CommandArgCompleter;
 import com.cavetale.core.command.CommandWarn;
 import com.cavetale.core.playercache.PlayerCache;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
@@ -147,7 +146,6 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         plugin.getWorlds().onLeaveWorld(player);
         player.teleport(targetWorld.getLocation(player.getUniqueId()));
         plugin.getWorlds().onJoinWorld(player);
-        player.setGameMode(GameMode.SURVIVAL);
         final Session session = plugin.getSessions().get(player.getUniqueId());
         session.setWorld(targetWorld);
         session.dirty = true;
@@ -168,7 +166,6 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         plugin.getWorlds().onLeaveWorld(player);
         player.teleport(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
         Sessions.resetPlayer(player);
-        player.setGameMode(GameMode.ADVENTURE);
         Session session = plugin.getSessions().get(player.getUniqueId());
         session.clearWorld();
         plugin.getSessions().save(session);

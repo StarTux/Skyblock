@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -82,7 +81,6 @@ public final class WorldStartGui {
         plugin().getWorlds().onLeaveWorld(player);
         player.teleport(location);
         Sessions.resetPlayer(player);
-        player.setGameMode(GameMode.SURVIVAL);
         session.setWorld(loadedWorld);
         session.dirty = true;
         loadedWorld.setLocation(player.getUniqueId(), location);
