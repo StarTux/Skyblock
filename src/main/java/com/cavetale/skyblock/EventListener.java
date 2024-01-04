@@ -8,10 +8,12 @@ import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -136,6 +138,15 @@ public final class EventListener implements Listener {
                                                                            text(" " + loadedWorld.seconds, WHITE), text("s", GRAY)),
                                                             textOfChildren(text(tiny("deaths "), GRAY), text(loadedWorld.getDeathCount(player.getUniqueId()), WHITE)),
                                                             textOfChildren(text(tiny("difficulty "), GRAY), loadedWorld.tag.difficulty.displayName)));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void onEntityTransform(EntityTransformEvent event) {
+        final LoadedWorld loadedWorld = plugin.getWorlds().in(event.getEntity().getWorld());
+        if (loadedWorld == null) return;
+        if (event.getEntity().getType() == EntityType.VILLAGER && event.getTransformReason() == EntityTransformEvent.TransformReason.LIGHTNING) {
+            event.setCancelled(true);
         }
     }
 }
