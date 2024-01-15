@@ -132,7 +132,7 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         if (args.length != 1) return false;
         final PlayerCache inviter = CommandArgCompleter.requirePlayerCache(args[0]);
         final WorldTag tag = plugin.getWorlds().loadTag(inviter.uuid);
-        if (tag == null || (inviter.uuid.equals(player.getUniqueId()) && !tag.invites.contains(player.getUniqueId()))) {
+        if (tag == null || (!inviter.uuid.equals(player.getUniqueId()) && !tag.invites.contains(player.getUniqueId()))) {
             throw new CommandWarn(inviter.name + " did not invite you!");
         }
         if (tag.difficulty.hardcore && tag.deathCount.getOrDefault(player.getUniqueId(), 0) > 0) {
