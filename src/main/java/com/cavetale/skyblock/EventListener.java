@@ -9,10 +9,14 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -116,6 +120,24 @@ public final class EventListener implements Listener {
         if (plugin.getWorlds().getLobbyWorld().equals(player)) {
             Sessions.resetPlayer(player);
         }
+    }
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    private void onEntityExplode(EntityExplodeEvent event) {
+        plugin.getWorlds().in(event.getEntity().getWorld(), loadedWorld -> {
+                if (event.getEntity() instanceof Mob mob && loadedWorld.getTag().getDifficulty().isDisableMobGriefing()) {
+                    event.blockList().clear();
+                }
+            });
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    private void onEntityChangeBlock(EntityChangeBlockEvent event) {
+        plugin.getWorlds().in(event.getEntity().getWorld(), loadedWorld -> {
+                if (event.getEntity() instanceof Mob mob && loadedWorld.getTag().getDifficulty().isDisableMobGriefing()) {
+                    if (event.getEntity() instanceof Villager) return;
+                    event.setCancelled(true);
+                }
+            });
     }
 
     @EventHandler

@@ -1,11 +1,13 @@
 package com.cavetale.skyblock;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Difficulty;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
+@Getter
 @RequiredArgsConstructor
 public enum SkyblockDifficulty {
     EASY(text("Easy", GREEN), Difficulty.EASY, true, true, true, true, false),

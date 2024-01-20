@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 import net.kyori.adventure.util.TriState;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
@@ -54,6 +55,13 @@ public final class Worlds {
 
     protected LoadedWorld in(World world) {
         return loadedWorlds.get(world.getName());
+    }
+
+    public void in(World world, Consumer<LoadedWorld> callback) {
+        LoadedWorld loadedWorld = in(world);
+        if (loadedWorld != null) {
+            callback.accept(loadedWorld);
+        }
     }
 
     protected LoadedWorld load(UUID uuid) {
@@ -124,7 +132,7 @@ public final class Worlds {
         world.setGameRule(GameRule.LOG_ADMIN_COMMANDS, true);
         world.setGameRule(GameRule.MAX_COMMAND_CHAIN_LENGTH, 1);
         world.setGameRule(GameRule.MAX_ENTITY_CRAMMING, 10);
-        world.setGameRule(GameRule.MOB_GRIEFING, !difficulty.disableMobGriefing);
+        world.setGameRule(GameRule.MOB_GRIEFING, true);
         world.setGameRule(GameRule.NATURAL_REGENERATION, difficulty.naturalRegeneration);
         world.setGameRule(GameRule.PLAYERS_SLEEPING_PERCENTAGE, 101);
         world.setGameRule(GameRule.RANDOM_TICK_SPEED, 3);

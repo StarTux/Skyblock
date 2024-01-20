@@ -1,12 +1,15 @@
 package com.cavetale.skyblock;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import lombok.Data;
 
-public final class WorldTag {
+@Data
+public final class WorldTag implements Serializable {
     protected UUID owner;
     protected long creationTime;
     protected Set<UUID> invites = new HashSet<>();
