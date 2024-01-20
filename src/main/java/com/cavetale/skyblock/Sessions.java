@@ -1,6 +1,7 @@
 package com.cavetale.skyblock;
 
 import com.cavetale.core.util.Json;
+import com.cavetale.inventory.storage.InventoryStorage;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,7 +80,11 @@ public final class Sessions {
     }
 
     protected static void resetPlayer(Player player) {
+        plugin().getLogger().info("[RESET] " + player.getName()
+                                  + " Inventory " + Json.serialize(InventoryStorage.of(player.getInventory()))
+                                  + " Ender Chest " + Json.serialize(InventoryStorage.of(player.getEnderChest())));
         player.getInventory().clear();
+        player.getEnderChest().clear();
         player.setHealth(20.0);
         player.setFoodLevel(20);
         player.setSaturation(20f);
