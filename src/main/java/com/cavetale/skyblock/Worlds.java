@@ -234,11 +234,11 @@ public final class Worlds {
         folder.mkdirs();
         final File file = new File(folder, player.getUniqueId() + "_save.json");
         PlayerWorldTag tag = Json.load(file, PlayerWorldTag.class, PlayerWorldTag::new);
-        plugin().getLogger().info("[Store] [" + loadedWorld.uuid + "] " + player.getName() + ": " + Json.serialize(tag));
         PlayerWorldSave save = new PlayerWorldSave();
         save.store(player);
         tag.saves.add(save);
         Json.save(file, tag, true);
+        plugin().getLogger().info("[Store] [" + loadedWorld.uuid + "] " + player.getName() + ": " + Json.serialize(tag));
     }
 
     public void onJoinWorld(Player player) {
