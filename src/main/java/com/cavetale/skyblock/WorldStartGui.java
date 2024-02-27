@@ -80,6 +80,7 @@ public final class WorldStartGui {
         plugin().getWorlds().storeCurrentLocation(player);
         plugin().getWorlds().onLeaveWorld(player);
         player.teleport(location);
+        plugin().getLogger().info("[RESET] " + player.getName() + " World Start GUI");
         Sessions.resetPlayer(player);
         session.setWorld(loadedWorld);
         session.dirty = true;

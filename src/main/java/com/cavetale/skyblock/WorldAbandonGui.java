@@ -34,6 +34,7 @@ public final class WorldAbandonGui {
         if (loadedWorld != null) {
             for (Player playerInWorld : loadedWorld.getPlayers()) {
                 playerInWorld.teleport(plugin().getWorlds().getLobbyWorld().getSpawnLocation());
+                plugin().getLogger().info("[RESET] " + player.getName() + " World Abandon GUI");
                 Sessions.resetPlayer(playerInWorld);
             }
             if (!plugin().getWorlds().unload(loadedWorld)) {

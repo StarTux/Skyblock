@@ -121,6 +121,7 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
             plugin.getWorlds().storeCurrentLocation(targetPlayer);
             plugin.getWorlds().onLeaveWorld(targetPlayer);
             targetPlayer.teleport(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
+            plugin.getLogger().info("[RESET] " + player.getName() + " Uninvite Command Target");
             Sessions.resetPlayer(targetPlayer);
             Session targetSession = plugin.getSessions().get(target.uuid);
             targetSession.clearWorld();
@@ -165,6 +166,7 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         plugin.getWorlds().storeCurrentLocation(player);
         plugin.getWorlds().onLeaveWorld(player);
         player.teleport(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
+        plugin.getLogger().info("[RESET] " + player.getName() + " Leave Command");
         Sessions.resetPlayer(player);
         Session session = plugin.getSessions().get(player.getUniqueId());
         session.clearWorld();

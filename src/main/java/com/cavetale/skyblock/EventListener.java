@@ -44,6 +44,7 @@ public final class EventListener implements Listener {
             event.setSpawnLocation(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
             return;
         }
+        plugin.getLogger().info("[SPAWN LOCATION] " + player.getName() + " " + session.tag.inWorld);
         WorldTag worldTag = plugin.getWorlds().loadTag(session.tag.inWorld);
         if (worldTag == null
             || (!session.tag.inWorld.equals(player.getUniqueId()) && !worldTag.invites.contains(player.getUniqueId()))
@@ -61,8 +62,10 @@ public final class EventListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
+        plugin.getLogger().info("[JOIN] " + player.getName() + " " + player.getWorld().getName());
         plugin.getWorlds().onJoinWorld(player);
         if (player.getWorld().equals(plugin.getWorlds().getLobbyWorld())) {
+            plugin.getLogger().info("[RESET] " + player.getName() + " " + event.getEventName() + " LobbyWorld");
             Sessions.resetPlayer(player);
         }
     }
@@ -70,6 +73,7 @@ public final class EventListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     private void onPlayerQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
+        plugin.getLogger().info("[QUIT] " + player.getName() + " " + player.getWorld().getName());
         plugin.getSessions().storeCurrentWorld(player);
         plugin.getWorlds().storeCurrentLocation(player);
         plugin.getWorlds().onLeaveWorld(player);
@@ -118,6 +122,7 @@ public final class EventListener implements Listener {
     private void onPlayerPostRespawn(PlayerPostRespawnEvent event) {
         final Player player = event.getPlayer();
         if (plugin.getWorlds().getLobbyWorld().equals(player)) {
+            plugin.getLogger().info("[RESET] " + player.getName() + " " + event.getEventName() + " LobbyWorld");
             Sessions.resetPlayer(player);
         }
     }
