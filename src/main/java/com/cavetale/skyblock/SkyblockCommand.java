@@ -66,6 +66,8 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         if (plugin.getWorlds().in(player.getWorld()) == loadedWorld) {
             throw new CommandWarn("You are already in your world");
         }
+        loadedWorld.tag.lastUseTime = System.currentTimeMillis();
+        loadedWorld.tag.updateComments();
         plugin.getWorlds().storeCurrentLocation(player);
         plugin.getWorlds().onLeaveWorld(player);
         player.teleport(loadedWorld.getLocation(player.getUniqueId()));
@@ -144,6 +146,8 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         if (plugin.getWorlds().in(player.getWorld()) == targetWorld) {
             throw new CommandWarn("You are already in this world");
         }
+        targetWorld.tag.lastUseTime = System.currentTimeMillis();
+        targetWorld.tag.updateComments();
         plugin.getWorlds().onLeaveWorld(player);
         player.teleport(targetWorld.getLocation(player.getUniqueId()));
         plugin.getWorlds().onJoinWorld(player);

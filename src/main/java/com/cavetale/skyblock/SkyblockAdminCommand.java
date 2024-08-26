@@ -3,7 +3,9 @@ package com.cavetale.skyblock;
 import com.cavetale.core.command.AbstractCommand;
 import com.cavetale.core.util.Json;
 import java.io.File;
+import java.util.UUID;
 import org.bukkit.Bukkit;
+import org.bukkit.WorldBorder;
 import org.bukkit.command.CommandSender;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
@@ -17,7 +19,7 @@ public final class SkyblockAdminCommand extends AbstractCommand<SkyblockPlugin> 
     protected void onEnable() {
         rootNode.addChild("fixlastused").denyTabCompletion()
             .description("Fix the missing last used value in all worlds")
-            .playerCaller(this::fixLastUsed);
+            .senderCaller(this::fixLastUsed);
     }
 
     private void fixLastUsed(CommandSender sender) {

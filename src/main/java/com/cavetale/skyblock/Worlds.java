@@ -78,8 +78,6 @@ public final class Worlds {
     protected LoadedWorld load(UUID uuid, World world) {
         LoadedWorld loadedWorld = new LoadedWorld(world, uuid);
         loadedWorld.load();
-        loadedWorld.tag.lastUseTime = System.currentTimeMillis();
-        loadedWorld.tag.updateComments();
         applyWorld(loadedWorld, world);
         loadedWorlds.put(uuid.toString(), loadedWorld);
         return loadedWorld;
@@ -96,8 +94,6 @@ public final class Worlds {
     }
 
     protected boolean unload(LoadedWorld loadedWorld) {
-        loadedWorld.tag.lastUseTime = System.currentTimeMillis();
-        loadedWorld.tag.updateComments();
         loadedWorld.save();
         if (!loadedWorld.getPlayers().isEmpty()) return false;
         final boolean save = true;
@@ -146,12 +142,6 @@ public final class Worlds {
         world.setGameRule(GameRule.SPAWN_RADIUS, 0);
         world.setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, false);
         world.setGameRule(GameRule.UNIVERSAL_ANGER, false);
-        world.getWorldBorder().setCenter(world.getSpawnLocation());
-        world.getWorldBorder().setSize(8192.0);
-        world.getWorldBorder().setDamageAmount(20.0);
-        world.getWorldBorder().setDamageBuffer(0.0);
-        world.getWorldBorder().setWarningDistance(4);
-        world.getWorldBorder().setWarningTime(5);
         // Defaults, I hope
         world.setSpawnFlags(true, true);
         world.setSpawnLimit(SpawnCategory.MONSTER, 70);

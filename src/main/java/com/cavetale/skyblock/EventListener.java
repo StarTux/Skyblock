@@ -57,6 +57,8 @@ public final class EventListener implements Listener {
         }
         LoadedWorld loadedWorld = plugin.getWorlds().getOrLoad(session.tag.inWorld);
         event.setSpawnLocation(loadedWorld.getLocation(player.getUniqueId()));
+        loadedWorld.tag.lastUseTime = System.currentTimeMillis();
+        loadedWorld.tag.updateComments();
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)

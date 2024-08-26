@@ -14,14 +14,14 @@ softdepend: []
 commands:
 
   skyblock:
-    aliases: [skyblockadm]
+    aliases: []
     description: Skyblock Command
     permission: skyblock.skyblock
     usage: |-
       /skyblock
 
   skyblockadmin:
-    aliases: []
+    aliases: [skyblockadm]
     description: Skyblock Admin Command
     permission: skyblock.admin
     usage: |-
