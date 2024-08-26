@@ -78,6 +78,8 @@ public final class Worlds {
     protected LoadedWorld load(UUID uuid, World world) {
         LoadedWorld loadedWorld = new LoadedWorld(world, uuid);
         loadedWorld.load();
+        loadedWorld.tag.lastUseTime = System.currentTimeMillis();
+        loadedWorld.tag.updateComments();
         applyWorld(loadedWorld, world);
         loadedWorlds.put(uuid.toString(), loadedWorld);
         return loadedWorld;
@@ -94,6 +96,8 @@ public final class Worlds {
     }
 
     protected boolean unload(LoadedWorld loadedWorld) {
+        loadedWorld.tag.lastUseTime = System.currentTimeMillis();
+        loadedWorld.tag.updateComments();
         loadedWorld.save();
         if (!loadedWorld.getPlayers().isEmpty()) return false;
         final boolean save = true;
@@ -173,6 +177,8 @@ public final class Worlds {
         LoadedWorld loadedWorld = create(uuid, world, difficulty);
         loadedWorld.tag.owner = uuid;
         loadedWorld.tag.creationTime = System.currentTimeMillis();
+        loadedWorld.tag.lastUseTime = System.currentTimeMillis();
+        loadedWorld.tag.updateComments();
         loadedWorld.save();
         return loadedWorld;
     }
