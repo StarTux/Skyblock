@@ -134,7 +134,7 @@ public final class Worlds {
         world.setGameRule(GameRule.MAX_ENTITY_CRAMMING, 10);
         world.setGameRule(GameRule.MOB_GRIEFING, true);
         world.setGameRule(GameRule.NATURAL_REGENERATION, difficulty.naturalRegeneration);
-        world.setGameRule(GameRule.PLAYERS_SLEEPING_PERCENTAGE, 101);
+        world.setGameRule(GameRule.PLAYERS_SLEEPING_PERCENTAGE, 100);
         world.setGameRule(GameRule.RANDOM_TICK_SPEED, 3);
         world.setGameRule(GameRule.REDUCED_DEBUG_INFO, false);
         world.setGameRule(GameRule.SEND_COMMAND_FEEDBACK, true);
