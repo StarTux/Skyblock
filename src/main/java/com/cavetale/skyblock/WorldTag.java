@@ -16,6 +16,7 @@ public final class WorldTag implements Serializable {
     protected String ownerName;
     protected String creationTimeName;
     protected String lastUseTimeName;
+    protected String originWorldPath = "skyblock";
     // Data
     protected UUID owner;
     protected long creationTime;

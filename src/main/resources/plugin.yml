@@ -41,3 +41,7 @@ permissions:
   skyblock.admin:
     description: Use /skyblockadmin
     default: op
+
+  skyblock.import:
+    description: Import worlds from creative
+    default: op

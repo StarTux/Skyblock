@@ -83,7 +83,11 @@ public final class Worlds {
         return loadedWorld;
     }
 
-    protected LoadedWorld create(UUID uuid, World world, SkyblockDifficulty difficulty) {
+    /**
+     * Called by the other create function.
+     * Why is this separate?
+     */
+    private LoadedWorld create(UUID uuid, World world, SkyblockDifficulty difficulty) {
         LoadedWorld loadedWorld = new LoadedWorld(world, uuid);
         loadedWorld.tag = new WorldTag();
         loadedWorld.tag.difficulty = difficulty;
@@ -160,14 +164,13 @@ public final class Worlds {
         world.setTicksPerSpawns(SpawnCategory.AXOLOTL, 1);
     }
 
-    public LoadedWorld create(UUID uuid, SkyblockDifficulty difficulty) {
-        BuildWorld buildWorld = BuildWorld.findWithPath("skyblock");
-        if (buildWorld == null) throw new IllegalStateException("BuildWorld not found: skyblock");
+    public LoadedWorld create(final UUID uuid, final BuildWorld buildWorld, final SkyblockDifficulty difficulty) {
         World world = buildWorld.makeLocalCopy(uuid.toString());
         LoadedWorld loadedWorld = create(uuid, world, difficulty);
         loadedWorld.tag.owner = uuid;
         loadedWorld.tag.creationTime = System.currentTimeMillis();
         loadedWorld.tag.lastUseTime = System.currentTimeMillis();
+        loadedWorld.tag.originWorldPath = buildWorld.getPath();
         loadedWorld.tag.updateComments();
         loadedWorld.save();
         return loadedWorld;

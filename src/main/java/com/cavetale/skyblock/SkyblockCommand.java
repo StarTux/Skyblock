@@ -44,7 +44,7 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         if (plugin.getWorlds().loadTag(player.getUniqueId()) != null) {
             throw new CommandWarn("You already have a world. Abandon it first!");
         }
-        new WorldStartGui(player).open();
+        new WorldChoiceGui(player).enable().open();
     }
 
     private void abandon(Player player) {
