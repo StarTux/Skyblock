@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import static com.cavetale.core.font.Unicode.tiny;
 import static com.cavetale.skyblock.SkyblockPlugin.plugin;
-import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.textOfChildren;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
@@ -27,7 +26,7 @@ public final class WorldStartGui {
         final int size = 6 * 9;
         Gui gui = new Gui(plugin()).size(size);
         GuiOverlay.Builder builder = GuiOverlay.BLANK.builder(size, BLUE)
-            .title(text("New Skyblock World", WHITE));
+            .title(text("Choose a Difficulty", WHITE));
         for (SkyblockDifficulty theDifficulty : SkyblockDifficulty.values()) {
             final int slot = 10 + theDifficulty.ordinal() * 9;
             final boolean selected = theDifficulty == difficulty;
@@ -37,11 +36,12 @@ public final class WorldStartGui {
             lore.add(yesno("disable mob griefing", theDifficulty.disableMobGriefing));
             lore.add(yesno("keep inventory", theDifficulty.keepInventory));
             lore.add(yesno("disable fire spread", theDifficulty.disableFireSpread));
-            if (theDifficulty.hardcore) lore.add(text("One Life!", DARK_RED));
-            ItemStack item = selected
+            if (theDifficulty.hardcore) lore.add(textOfChildren(Mytems.ATTENTION, text(" One Life!", DARK_RED)));
+            final ItemStack checkbox = selected
                 ? Mytems.CROSSED_CHECKBOX.createIcon(lore)
                 : Mytems.CHECKBOX.createIcon(lore);
-            gui.setItem(slot, item, click -> {
+            gui.setItem(slot, theDifficulty.createIcon());
+            gui.setItem(slot + 1, checkbox, click -> {
                     if (!click.isLeftClick()) return;
                     onClickDifficulty(theDifficulty);
                 });
@@ -56,9 +56,8 @@ public final class WorldStartGui {
     }
 
     private static Component yesno(String name, boolean value) {
-        return textOfChildren(text(tiny(name), value ? GREEN : GRAY),
-                              space(),
-                              value ? Mytems.ON.component : Mytems.OFF.component);
+        return textOfChildren(value ? Mytems.ON.component : Mytems.OFF.component,
+                              text(" " + tiny(name), value ? GREEN : GRAY));
     }
 
     private void onClickDifficulty(final SkyblockDifficulty theDifficulty) {
