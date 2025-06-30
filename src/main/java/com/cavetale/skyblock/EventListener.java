@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -141,8 +140,11 @@ public final class EventListener implements Listener {
     private void onEntityChangeBlock(EntityChangeBlockEvent event) {
         plugin.getWorlds().in(event.getEntity().getWorld(), loadedWorld -> {
                 if (event.getEntity() instanceof Mob mob && loadedWorld.getTag().getDifficulty().isDisableMobGriefing()) {
-                    if (event.getEntity() instanceof Villager) return;
-                    event.setCancelled(true);
+                    switch (event.getEntity().getType()) {
+                    case ENDERMAN:
+                        event.setCancelled(true);
+                    default: break;
+                    }
                 }
             });
     }
