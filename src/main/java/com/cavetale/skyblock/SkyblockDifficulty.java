@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Difficulty;
 import org.bukkit.inventory.ItemStack;
+import static io.papermc.paper.datacomponent.item.TooltipDisplay.tooltipDisplay;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
@@ -31,7 +32,7 @@ public enum SkyblockDifficulty {
 
     public ItemStack createIcon() {
         final ItemStack result = iconSupplier.get();
-        result.setData(DataComponentTypes.HIDE_TOOLTIP);
+        result.setData(DataComponentTypes.TOOLTIP_DISPLAY, tooltipDisplay().hideTooltip(true));
         return result;
     }
 }

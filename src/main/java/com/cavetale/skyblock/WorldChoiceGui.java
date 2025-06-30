@@ -16,6 +16,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import static com.cavetale.skyblock.SkyblockPlugin.plugin;
+import static io.papermc.paper.datacomponent.item.TooltipDisplay.tooltipDisplay;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
@@ -58,7 +59,7 @@ public final class WorldChoiceGui {
             } else {
                 icon = Mytems.PHOTO.createIcon();
             }
-            icon.setData(DataComponentTypes.HIDE_TOOLTIP);
+            icon.setData(DataComponentTypes.TOOLTIP_DISPLAY, tooltipDisplay().hideTooltip(true));
             gui.setItem(1 + column, 1 + row, icon, null);
             final ItemStack checkbox = buildWorld == theBuildWorld
                 ? Mytems.CROSSED_CHECKBOX.createIcon(theBuildWorld.getTooltipLines())
