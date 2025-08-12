@@ -1,6 +1,7 @@
 package com.cavetale.skyblock;
 
 import lombok.Getter;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -28,6 +29,16 @@ public final class SkyblockPlugin extends JavaPlugin {
     public void onDisable() {
         sessions.disable();
         worlds.disable();
+    }
+
+    public void teleportToLobby(Player player) {
+        worlds.storeCurrentLocation(player);
+        worlds.onLeaveWorld(player);
+        player.teleport(worlds.getLobbyWorld().getSpawnLocation());
+        Sessions.resetPlayer(player);
+        final Session session = sessions.get(player.getUniqueId());
+        session.clearWorld();
+        sessions.save(session);
     }
 
     public static SkyblockPlugin plugin() {

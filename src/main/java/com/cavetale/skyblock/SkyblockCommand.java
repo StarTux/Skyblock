@@ -2,8 +2,13 @@ package com.cavetale.skyblock;
 
 import com.cavetale.core.command.AbstractCommand;
 import com.cavetale.core.command.CommandArgCompleter;
+import com.cavetale.core.command.CommandContext;
+import com.cavetale.core.command.CommandNode;
 import com.cavetale.core.command.CommandWarn;
 import com.cavetale.core.playercache.PlayerCache;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import static net.kyori.adventure.text.Component.text;
@@ -29,8 +34,12 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
             .playerCaller(this::home);
         rootNode.addChild("invite").arguments("<player>")
             .description("Invite someone to your Skyblock world")
-            .completers(CommandArgCompleter.NULL)
+            .completers(CommandArgCompleter.PLAYER_CACHE)
             .playerCaller(this::invite);
+        rootNode.addChild("uninvite").arguments("<player>")
+            .description("Remove an invitation")
+            .completers(this::completeUninvite)
+            .playerCaller(this::uninvite);
         rootNode.addChild("join").arguments("<player>")
             .description("Accept an invite")
             .completers(CommandArgCompleter.NULL)
@@ -112,23 +121,39 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         if (loadedWorld == null || !loadedWorld.uuid.equals(player.getUniqueId())) {
             throw new CommandWarn("This world does not belong to you!");
         }
-        if (!loadedWorld.tag.invites.contains(target.uuid)) {
-            throw new CommandWarn(target.name + " is not invited");
+        // Edit world tag
+        final boolean result = loadedWorld.getTag().getInvites().remove(target.getUniqueId());
+        loadedWorld.setDirty(true);
+        // Warp player out
+        final Player targetPlayer = Bukkit.getPlayer(target.getUuid());
+        final boolean playerPresent = targetPlayer != null && targetPlayer.getWorld().equals(loadedWorld.getWorld());
+        if (playerPresent) {
+            plugin.getLogger().info("[RESET] " + targetPlayer.getName() + " Uninvite Command Target");
+            plugin.teleportToLobby(targetPlayer);
         }
-        loadedWorld.tag.invites.remove(target.uuid);
-        loadedWorld.dirty = true;
-        player.sendMessage(text("Uninvited: " + target.name, YELLOW));
-        Player targetPlayer = Bukkit.getPlayer(target.uuid);
-        if (targetPlayer != null && plugin.getWorlds().in(targetPlayer.getWorld()) == loadedWorld) {
-            plugin.getWorlds().storeCurrentLocation(targetPlayer);
-            plugin.getWorlds().onLeaveWorld(targetPlayer);
-            targetPlayer.teleport(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
-            plugin.getLogger().info("[RESET] " + player.getName() + " Uninvite Command Target");
-            Sessions.resetPlayer(targetPlayer);
-            Session targetSession = plugin.getSessions().get(target.uuid);
-            targetSession.clearWorld();
+        // Error message
+        if (!result && !playerPresent) {
+            throw new CommandWarn(target.getName() + " was not invited");
         }
+        player.sendMessage(text("Revoked invitation from " + target.getName(), YELLOW));
         return true;
+    }
+
+    private List<String> completeUninvite(CommandContext context, CommandNode node, String arg) {
+        if (!context.isPlayer()) return List.of();
+        final LoadedWorld loadedWorld = plugin.getWorlds().in(context.player.getWorld());
+        if (loadedWorld == null || !loadedWorld.uuid.equals(context.player.getUniqueId())) {
+            return List.of();
+        }
+        final String lower = arg.toLowerCase();
+        final List<String> result = new ArrayList<>();
+        for (UUID uuid : loadedWorld.getTag().getInvites()) {
+            final String name = PlayerCache.nameForUuid(uuid);
+            if (name.toLowerCase().contains(lower)) {
+                result.add(name);
+            }
+        }
+        return result;
     }
 
     private boolean join(Player player, String[] args) {
@@ -167,14 +192,8 @@ public final class SkyblockCommand extends AbstractCommand<SkyblockPlugin> {
         if (loadedWorld == null) {
             throw new CommandWarn("You are not playing in a world");
         }
-        plugin.getWorlds().storeCurrentLocation(player);
-        plugin.getWorlds().onLeaveWorld(player);
-        player.teleport(plugin.getWorlds().getLobbyWorld().getSpawnLocation());
         plugin.getLogger().info("[RESET] " + player.getName() + " Leave Command");
-        Sessions.resetPlayer(player);
-        Session session = plugin.getSessions().get(player.getUniqueId());
-        session.clearWorld();
-        plugin.getSessions().save(session);
+        plugin.teleportToLobby(player);
         player.sendMessage(text("You left the Skyblock world of " + PlayerCache.nameForUuid(loadedWorld.uuid) + "!", YELLOW));
     }
 }
